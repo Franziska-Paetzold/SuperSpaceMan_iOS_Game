@@ -10,12 +10,22 @@ import SpriteKit
 
 class GameScene: SKScene {
     
+    let backgroundNode = SKSpriteNode(imageNamed: "Background")
+    let playerNode = SKSpriteNode(imageNamed: "Player")
+    
     required init?(coder aDecoder: NSCoder){
         super.init(coder: aDecoder)
     }
     
     override init(size: CGSize){
         super.init(size: size)
-        self.backgroundColor = SKColor(red: 1.0, green: 0.65, blue: 0.65, alpha: 1.0)
+        backgroundNode.size.width = frame.size.width //sets the Node to the views frame
+        backgroundNode.anchorPoint = CGPoint(x: 0.5, y: 0.0) //on which point the node is set (0.5 & 0 is bottom center of the node)
+        backgroundNode.position = CGPoint (x: size.width / 2.0, y: 0.0) //set node to the middle and the bottom of the scene
+        addChild(backgroundNode) // adds node to scene
+        
+        playerNode.position = CGPoint(x: size.width/2.0, y: 80.0)
+        addChild(playerNode)
+        
     }
 }
