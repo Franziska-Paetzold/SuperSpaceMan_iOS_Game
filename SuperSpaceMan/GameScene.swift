@@ -10,8 +10,9 @@ import SpriteKit
 
 class GameScene: SKScene {
     
-    let backgroundNode = SKSpriteNode(imageNamed: "Background")
-    let playerNode = SKSpriteNode(imageNamed: "Player")
+    let backgroundNode = SKSpriteNode(imageNamed: "background")
+    let playerNode = SKSpriteNode(imageNamed: "player")
+    let brick1Node = SKSpriteNode(imageNamed: "brick1")
     
     required init?(coder aDecoder: NSCoder){
         super.init(coder: aDecoder)
@@ -20,6 +21,9 @@ class GameScene: SKScene {
     override init(size: CGSize){
         super.init(size: size)
         physicsWorld.gravity = CGVector(dx: 0.0, dy: -0.1)
+        
+        //ability for user to apply an impulse
+        isUserInteractionEnabled = true
         
         //configuration background
         backgroundNode.size.width = frame.size.width //sets the Node to the views frame
@@ -33,7 +37,22 @@ class GameScene: SKScene {
         playerNode.physicsBody = SKPhysicsBody(circleOfRadius: playerNode.size.width / 2)
         playerNode.physicsBody?.isDynamic = true
         playerNode.position = CGPoint(x: size.width/2.0, y: 80.0) // anchorPoint is the middle
+        //let it look like the ball falls through air
+        playerNode.physicsBody?.linearDamping = 1.0
+        //stop rotation by collision
+        //playerNode.physicsBody?.allowsRotation = false
         addChild(playerNode)
         
+        brick1Node.position = CGPoint(x:150.0, y: size.height - 25.0)
+        brick1Node.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: brick1Node.size.width, height: brick1Node.size.height))
+        brick1Node.physicsBody = SKPhysicsBody(circleOfRadius: brick1Node.size.width / 2)
+        brick1Node.physicsBody?.isDynamic = false
+        addChild(brick1Node)
+        
+    }
+    
+    //needs isUserInteractionEnabled = true in initializer
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        playerNode.physicsBody?.applyImpulse(CGVector(dx: 0.0, dy: 40.0))
     }
 }
