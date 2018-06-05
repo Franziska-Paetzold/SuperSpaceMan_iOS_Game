@@ -14,12 +14,12 @@ class GameScene: SKScene {
     let foregroundNode = SKSpriteNode()
     let playerNode = SKSpriteNode(imageNamed: "player")
     //let brick1Node = SKSpriteNode(imageNamed: "brick1")
-    let seaShellNode = SKSpriteNode(imageNamed: "seashell")
+    //let seaShellNode = SKSpriteNode(imageNamed: "seashell")
     
     let collisionCategoryPlayer : UInt32 = 0x1 << 1
     let collisionCategoryPowerUpShells : UInt32 = 0x1 << 2
     
-    var impulseCount = 4
+    var impulseCount = 10 //TODO: 4
     
     
     required init?(coder aDecoder: NSCoder){
@@ -30,7 +30,7 @@ class GameScene: SKScene {
         super.init(size: size)
         // needed for extension
         physicsWorld.contactDelegate = self
-        physicsWorld.gravity = CGVector(dx: 0.0, dy: -5.0)
+        physicsWorld.gravity = CGVector(dx: 0.0, dy: -0.1) //TODO: dy: 5.0
         
         //ability for user to apply an impulse
         isUserInteractionEnabled = true
@@ -68,6 +68,7 @@ class GameScene: SKScene {
         foregroundNode.addChild(brick1Node)
         */
         
+        /*
         //============configuration seaShellNode============
         seaShellNode.name = "SEA_SHELL"
         seaShellNode.position = CGPoint(x: 150.0, y: size.width - 25)
@@ -76,7 +77,17 @@ class GameScene: SKScene {
         seaShellNode.physicsBody?.categoryBitMask = collisionCategoryPowerUpShells
         //seaShellNode.physicsBody?.collisionBitMask = 0 //0 = we dont want the program to handle the collision for us
         foregroundNode.addChild(seaShellNode)
+        */
         
+        //============configuration seaShellNodes============
+        //TODO: two loops should be added after each other not every other from a different loop
+        var seaShellNodePosition = CGPoint(x: playerNode.position.x, y: playerNode.position.y + 100)
+        createNodesInRow(numOfNodes: 20, nodePosition: seaShellNodePosition, parentNode: foregroundNode, categoryBitMaskNode: collisionCategoryPlayer)
+        
+        
+        seaShellNodePosition = CGPoint(x: playerNode.position.x + 50, y: playerNode.position.y)
+        createNodesInRow(numOfNodes: 20, nodePosition: seaShellNodePosition, parentNode: foregroundNode, categoryBitMaskNode: collisionCategoryPlayer)
+     
         
     }
     
@@ -92,18 +103,36 @@ class GameScene: SKScene {
         }
     }
     
-    
-    
 }
 
 extension GameScene: SKPhysicsContactDelegate{
     func didBegin(_ contact: SKPhysicsContact) {
         print("There has been contact")
         //a represents first body in the contact (player), b property represents second body
-        let contactNode = contact.bodyB.node
-        if contactNode?.name == "SEA_SHELL" {
-            contactNode?.removeFromParent()
-            impulseCount += 4
+        let contactNode = contact.bodyB.node!
+        
+        if contactNode.name == "SEA_SHELL" {
+            contactNode.removeFromParent()
+            impulseCount += 5 //TODO: 1
         }
+    }
+}
+
+func createNodesInRow(numOfNodes: Int, nodePosition: CGPoint, parentNode: SKNode, categoryBitMaskNode: UInt32){
+    var nodePosition = nodePosition
+    
+    for _ in 0...(numOfNodes-1) {
+        let seaShellNode = SKSpriteNode(imageNamed: "seashell")
+        
+        nodePosition.y += 140
+        seaShellNode.position = nodePosition
+        seaShellNode.physicsBody = SKPhysicsBody(circleOfRadius: seaShellNode.size.width/2)
+        seaShellNode.physicsBody?.isDynamic = false
+        
+        seaShellNode.physicsBody?.categoryBitMask = categoryBitMaskNode
+        seaShellNode.physicsBody?.collisionBitMask = 0
+        seaShellNode.name = "SEA_SHELL"
+        
+        parentNode.addChild(seaShellNode)
     }
 }
