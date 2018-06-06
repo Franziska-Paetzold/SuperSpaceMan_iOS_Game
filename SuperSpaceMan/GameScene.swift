@@ -56,7 +56,7 @@ class GameScene: SKScene {
         //playerNode.physicsBody?.allowsRotation = false
         playerNode.physicsBody?.categoryBitMask = collisionCategoryPlayer
         playerNode.physicsBody?.contactTestBitMask = collisionCategoryPowerUpShells
-        //playerNode.physicsBody?.collisionBitMask = 0 //handle collision on our own s
+        playerNode.physicsBody?.collisionBitMask = 0 //handle collision on our own s
         foregroundNode.addChild(playerNode)
         
         //============configuration brick1Node============
@@ -82,14 +82,14 @@ class GameScene: SKScene {
         //============configuration seaShellNodes============
         //TODO: two loops should be added after each other not every other from a different loop
         var seaShellNodePosition = CGPoint(x: playerNode.position.x, y: playerNode.position.y + 100)
-        createNodesInRow(numOfNodes: 20, nodePosition: seaShellNodePosition, parentNode: foregroundNode, categoryBitMaskNode: collisionCategoryPlayer)
-        
+        createNodesInRow(numOfNodes: 20, nodePosition: seaShellNodePosition, parentNode: foregroundNode, categoryBitMaskNode: collisionCategoryPowerUpShells)
         
         seaShellNodePosition = CGPoint(x: playerNode.position.x + 50, y: playerNode.position.y)
-        createNodesInRow(numOfNodes: 20, nodePosition: seaShellNodePosition, parentNode: foregroundNode, categoryBitMaskNode: collisionCategoryPlayer)
-     
+        createNodesInRow(numOfNodes: 20, nodePosition: seaShellNodePosition, parentNode: foregroundNode, categoryBitMaskNode: collisionCategoryPowerUpShells)
+        
         
     }
+
     
     //needs isUserInteractionEnabled = true in initializer
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -102,12 +102,12 @@ class GameScene: SKScene {
             impulseCount -= 1
         }
     }
-    
 }
+
 
 extension GameScene: SKPhysicsContactDelegate{
     func didBegin(_ contact: SKPhysicsContact) {
-        print("There has been contact")
+        print("impulse count:  \(impulseCount)")
         //a represents first body in the contact (player), b property represents second body
         let contactNode = contact.bodyB.node!
         
@@ -118,6 +118,8 @@ extension GameScene: SKPhysicsContactDelegate{
     }
 }
 
+
+//creates power ups (sea shells) and adds them to the foreground node
 func createNodesInRow(numOfNodes: Int, nodePosition: CGPoint, parentNode: SKNode, categoryBitMaskNode: UInt32){
     var nodePosition = nodePosition
     
@@ -136,3 +138,4 @@ func createNodesInRow(numOfNodes: Int, nodePosition: CGPoint, parentNode: SKNode
         parentNode.addChild(seaShellNode)
     }
 }
+
