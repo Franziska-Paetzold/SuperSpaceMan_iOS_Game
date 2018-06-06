@@ -7,6 +7,7 @@
 //
 
 import SpriteKit
+import CoreMotion
 
 class GameScene: SKScene {
     
@@ -19,7 +20,9 @@ class GameScene: SKScene {
     let collisionCategoryPlayer : UInt32 = 0x1 << 1
     let collisionCategoryPowerUpShells : UInt32 = 0x1 << 2
     
-    var impulseCount = 10 //TODO: 4
+    var impulseCount = 10 //TODO: 42
+    //get acess to iOS motion services
+    let coreMotionManager = CMMotionManager()
     
     
     required init?(coder aDecoder: NSCoder){
@@ -94,6 +97,9 @@ class GameScene: SKScene {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         if !playerNode.physicsBody!.isDynamic {
             playerNode.physicsBody?.isDynamic = true
+            
+            coreMotionManager.accelerometerUpdateInterval = 0.3 //3/10th of a second
+            coreMotionManager.startAccelerometerUpdates()
         }
         
         if impulseCount > 0 {
@@ -106,7 +112,20 @@ class GameScene: SKScene {
     override func update(_ currentTime: TimeInterval) {
         backgroundNode.position = CGPoint(x: backgroundNode.position.x, y: -((playerNode.position.y - 180.0)/8))
     }
-    //TODO player can still leave the view 
+    //TODO player can still leave the view
+    
+    override func didSimulatePhysics(){
+        if let accelerometerData = coreMotionManager.accelerometerData {
+            playerNode.physicsBody!.velocity = CGVector(dx: CGFloat(accelerometerData.acceleration.x * 360), dy: playerNode.physicsBody!.velocity.dy)
+        }
+        
+        if playerNode.position.x < -(playerNode.size.width/2){
+            playerNode.position = CGPoint(x: size.width - playerNode.size.width / 2, y: playerNode.position.y)
+        }
+        else if playerNode.position.x > self.size.width {
+            playerNode.position = CGPoint(x: playerNode.size.width / 2, y: playerNode.position.y)
+        }
+    }
 }
 
 
@@ -143,4 +162,5 @@ func createNodesInRow(numOfNodes: Int, nodePosition: CGPoint, parentNode: SKNode
         parentNode.addChild(seaShellNode)
     }
 }
+
 
