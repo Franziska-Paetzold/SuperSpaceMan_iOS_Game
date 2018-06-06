@@ -80,7 +80,6 @@ class GameScene: SKScene {
         */
         
         //============configuration seaShellNodes============
-        //TODO: two loops should be added after each other not every other from a different loop
         var seaShellNodePosition = CGPoint(x: playerNode.position.x, y: playerNode.position.y + 100)
         createNodesInRow(numOfNodes: 20, nodePosition: seaShellNodePosition, parentNode: foregroundNode, categoryBitMaskNode: collisionCategoryPowerUpShells)
         
@@ -102,6 +101,12 @@ class GameScene: SKScene {
             impulseCount -= 1
         }
     }
+    
+    //changes the position of the background based on the position of the player
+    override func update(_ currentTime: TimeInterval) {
+        backgroundNode.position = CGPoint(x: backgroundNode.position.x, y: -((playerNode.position.y - 180.0)/8))
+    }
+    //TODO player can still leave the view 
 }
 
 

@@ -3,7 +3,16 @@
     {
       "idiom" : "universal",
       "filename" : "background.jpg",
+      "compression-type" : "lossless",
       "scale" : "1x"
+    },
+    {
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "idiom" : "universal",
+      "scale" : "3x"
     }
   ],
   "info" : {
